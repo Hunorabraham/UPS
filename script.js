@@ -2,11 +2,11 @@ const can = document.querySelectorAll("canvas")[0];
 const draw = can.getContext("2d");
 draw.imageSmoothingEnabled = false;
 const bgColour = "rgb(170,225,190)";
-const bgGradient = draw.createRadialGradient(can.width/2,can.height/2,can.height/10,can.width/2,can.height/2,can.height);
+const bgGradient = draw.createRadialGradient(can.width/2,can.height/2,0,can.width/2,can.height/2,can.height);
 bgGradient.addColorStop(0,"rgb(170,225,190)");
 bgGradient.addColorStop(0.9,"rgb(85,112,95)");
 bgGradient.addColorStop(1,"black");
-const pixelWidth = 10;
+const pixelWidth = 3;
 const sourceMultiplier = pixelWidth/5;
 
 
@@ -31,6 +31,7 @@ function load(){
 }
 function drawGrid(){
     draw.beginPath();
+    draw.translate(0.5,0.5);
     for(let i = 1; i < can.height / pixelWidth; i++){
         draw.moveTo(0, i * pixelWidth);
         draw.lineTo(can.width, i * pixelWidth);
@@ -40,13 +41,14 @@ function drawGrid(){
         draw.lineTo(i * pixelWidth, can.height);
     }
     draw.stroke();
+    draw.resetTransform();
     draw.closePath();
 }
 //currently assumes that source image has 5x5 pixels
-function drawPixelPerfect(img, x, y){
+function drawGridAligned(img, x, y){
     draw.drawImage(img, x * pixelWidth, y * pixelWidth, img.width * sourceMultiplier, img.height * sourceMultiplier);
 }
-function drawPixelPerfect2(img, x, y){
+function drawGridAligned2(img, x, y){
     draw.drawImage(img, x * pixelWidth, y * pixelWidth, img.width * pixelWidth, img.height * pixelWidth);
 }
 
@@ -60,7 +62,7 @@ function start(){
     //this whole part is only for testing
     console.log("begun!", spriteDict);
     let x = 5;
-    draw.lineWidth = 2;
+    draw.lineWidth = 1;
     draw.fillStyle = bgGradient;
     draw.strokeStyle = bgGradient;
     planets = [];
@@ -74,8 +76,8 @@ function start(){
     setInterval(()=>{
         draw.fillRect(0,0,can.width,can.height);
         //drawPixelPerfect(spriteDict.planet_1,5,5);
-        planets.forEach(planet => drawPixelPerfect(spriteDict[planet.type],planet.x,planet.y));
-        drawPixelPerfect2(spriteDict.test, 10,10);
+        planets.forEach(planet => drawGridAligned(spriteDict[planet.type],planet.x,planet.y));
+        drawGridAligned2(spriteDict.test, 10,10);
         drawGrid();
     },100);
 }
