@@ -1,5 +1,6 @@
 const can = document.querySelectorAll("canvas")[0];
 const draw = can.getContext("2d");
+draw.imageSmoothingEnabled = false;
 const bgColour = "rgb(170,225,190)";
 const bgGradient = draw.createRadialGradient(can.width/2,can.height/2,can.height/10,can.width/2,can.height/2,can.height);
 bgGradient.addColorStop(0,"rgb(170,225,190)");
@@ -45,10 +46,14 @@ function drawGrid(){
 function drawPixelPerfect(img, x, y){
     draw.drawImage(img, x * pixelWidth, y * pixelWidth, img.width * sourceMultiplier, img.height * sourceMultiplier);
 }
+function drawPixelPerfect2(img, x, y){
+    draw.drawImage(img, x * pixelWidth, y * pixelWidth, img.width * pixelWidth, img.height * pixelWidth);
+}
 
 //initilalisation
 addSprite("planet_1","planet.png");
-addSprite("planet_2","planet2.png");
+addSprite("planet_2","planet2.png")
+addSprite("test","pixelated.png");
 
 
 function start(){
@@ -70,6 +75,7 @@ function start(){
         draw.fillRect(0,0,can.width,can.height);
         //drawPixelPerfect(spriteDict.planet_1,5,5);
         planets.forEach(planet => drawPixelPerfect(spriteDict[planet.type],planet.x,planet.y));
+        drawPixelPerfect2(spriteDict.test, 10,10);
         drawGrid();
     },100);
 }
