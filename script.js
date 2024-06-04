@@ -9,6 +9,8 @@ const pixelWidth = 3;
 const sourceMultiplier = pixelWidth/5;
 
 draw.font = "10pt Consolas";
+draw.textBaseline = "top";
+draw.textAlign = "center";
 
 const themes = ["rock","fire","crystal"];
 const themeSprites = {
@@ -45,6 +47,11 @@ function generatePlanet(type){
             });
             break;
         case "merchant":
+            newPlanet = new planet(type,{
+                spriteName : "merchant1",
+                x : Math.round(Math.random()*can.width/pixelWidth -40),
+                y : Math.round(Math.random()*can.height/pixelWidth -40),
+            });
             break;
     }
     return newPlanet;
@@ -112,7 +119,7 @@ addSprite("test","pixelated.png");
 addSprite("rock","rockPlanet.png");
 addSprite("fire","firePlanet.png");
 addSprite("crystal","crystalPlanet.png");
-
+addSprite("merchant1","ringOutpost.png");
 
 function start(){
     //this whole part is only for testing
@@ -123,7 +130,7 @@ function start(){
     draw.strokeStyle = bgGradient;
     planets = [];
     for(let i = 0; i < 20; i++){
-        planets.push(generatePlanet("loot"));
+        planets.push(generatePlanet((Math.random()<0.1)?"merchant":"loot"));
     }
     setInterval(()=>{
         draw.fillStyle = bgGradient;
@@ -136,7 +143,7 @@ function start(){
         drawGrid();
         draw.fillStyle = "white";
         planets.forEach(planet => {
-            draw.fillText(planet.name,planet.x*pixelWidth,(planet.y + 51)*pixelWidth);
+            draw.fillText(planet.name,(planet.x+20)*pixelWidth,(planet.y + 41)*pixelWidth);
         });
     },100);
 }
