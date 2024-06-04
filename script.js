@@ -113,9 +113,6 @@ function generateName(){
 
 
 //initilalisation
-addSprite("planet_1","planet.png");
-addSprite("planet_2","planet2.png")
-addSprite("test","pixelated.png");
 addSprite("rock","rockPlanet.png");
 addSprite("fire","firePlanet.png");
 addSprite("crystal","crystalPlanet.png");
@@ -139,7 +136,6 @@ function start(){
         planets.forEach(planet => {
             drawAligned2(spriteDict[planet.spriteName],planet.x,planet.y)
         });
-        drawAligned2(spriteDict.test, 10,10);
         drawGrid();
         draw.fillStyle = "white";
         planets.forEach(planet => {
