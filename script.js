@@ -2,17 +2,19 @@ const can = document.querySelectorAll("canvas")[0];
 const draw = can.getContext("2d");
 draw.imageSmoothingEnabled = false;
 const bgColour = "rgb(127,169,143)";
-const bgGradient = draw.createRadialGradient(can.width/2,can.height/2,0,can.width/2,can.height/2,can.height);
-bgGradient.addColorStop(0,"rgb(170,225,190)");
-bgGradient.addColorStop(0.9,"rgb(85,112,95)");
+const bgGradient = draw.createRadialGradient(can.width/2,can.height/2,0,can.width/2,can.height/2,can.height*2);
+bgGradient.addColorStop(0,"rgb(30,30,40)");
+bgGradient.addColorStop(0.9,"rgb(0,0,0)");
 const pixelWidth = 3;
 const sourceMultiplier = pixelWidth/5;
 
+draw.font = "10pt Consolas";
+
 const themes = ["rock","fire","crystal"];
 const themeSprites = {
-    rock: "default",
-    fire: "defalut",
-    crystal: "default",
+    rock: "rock",
+    fire: "fire",
+    crystal: "crystal",
 };
 
 
@@ -21,7 +23,8 @@ let planets = [];
 class planet{
     constructor(type,options){
         this.type = type;
-        this.pos = [0,0];
+        this.x = 0;
+        this.y = 0;
         this.name = generateName();
         this.neighbours = [];
         this.spriteName = "missing";//missing by default
@@ -30,15 +33,21 @@ class planet{
     }
 }
 function generatePlanet(type){
-    let planet;
+    let newPlanet;
     switch(type){
         case "loot":
             let rngTheme = themes[Math.round(Math.random()*(themes.length-1))];
-            planet = new planet(type,{theme:rngTheme, spriteName:themeSprites[rngTheme]});
+            newPlanet = new planet(type,{
+                theme : rngTheme,
+                spriteName : themeSprites[rngTheme],
+                x : Math.round(Math.random()*can.width/pixelWidth -40),
+                y : Math.round(Math.random()*can.height/pixelWidth -40),
+            });
             break;
         case "merchant":
             break;
     }
+    return newPlanet;
 }
 
 
@@ -100,6 +109,9 @@ function generateName(){
 addSprite("planet_1","planet.png");
 addSprite("planet_2","planet2.png")
 addSprite("test","pixelated.png");
+addSprite("rock","rockPlanet.png");
+addSprite("fire","firePlanet.png");
+addSprite("crystal","crystalPlanet.png");
 
 
 function start(){
@@ -110,18 +122,21 @@ function start(){
     draw.fillStyle = bgGradient;
     draw.strokeStyle = bgGradient;
     planets = [];
-    for(let i = 0; i < 5; i++){
-        planets.push({
-            x: Math.round(Math.random()*can.width/pixelWidth),
-            y: Math.round(Math.random()*can.height/pixelWidth),
-            type: (Math.random()<0.5)?"planet_1":"planet_2",
-        });
+    for(let i = 0; i < 20; i++){
+        planets.push(generatePlanet("loot"));
     }
     setInterval(()=>{
+        draw.fillStyle = bgGradient;
         draw.fillRect(0,0,can.width,can.height);
         //drawPixelPerfect(spriteDict.planet_1,5,5);
-        planets.forEach(planet => drawAligned(spriteDict[planet.type],planet.x,planet.y));
+        planets.forEach(planet => {
+            drawAligned2(spriteDict[planet.spriteName],planet.x,planet.y)
+        });
         drawAligned2(spriteDict.test, 10,10);
         drawGrid();
+        draw.fillStyle = "white";
+        planets.forEach(planet => {
+            draw.fillText(planet.name,planet.x*pixelWidth,(planet.y + 51)*pixelWidth);
+        });
     },100);
 }
