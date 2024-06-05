@@ -11,23 +11,35 @@ const sourceMultiplier = pixelWidth/5;
 const avgDist = 80;
 const maxNeighbours = 6;
 const rings = [Math.round(Math.random()*3)+3,Math.round(Math.random()*6)+6,Math.round(Math.random()*12)+12];
+
+let player = {};
+player.money = 10;
+
 //console
 let command = "";
-const alphanum = /^[a-zA-Z1-9]$/;
-
+const alphanum = /^[a-zA-Z0-9?]$/;
+let terminal = {};
+terminal.width = 200;
+terminal.height = 20;
+terminal.text = "hihihi";
 //input
 keys = [];
 document.body.onkeydown = (e)=>{
     if(!keys.includes(e.code)) keys.push(e.code);
     if(e.key.match(alphanum)) {
         command+=e.key;
-        console.log(command);
+        terminal.text = command;
         return;
     }
     switch(e.code){
         case "Space":
             command += " ";
             break;
+        case "Backspace":{
+            command = command.slice(0,command.length-1);
+            terminal.text = command;
+            break;
+        }
         case "Enter":
             execute();
     }
@@ -43,17 +55,43 @@ function execute(){
         case "fuck":
             writeLine("AAAAAA");
             break;
+        case "goto":
+            let index = -1;
+            for(let i = 0; i < planets.length; i++){
+                if(shorten(planets[i].name) == arg){
+                    index = i;
+                    break;
+                }
+            }
+            if(index != -1) {
+                planets.splice(index,1);
+                writeLine("whoops");
+            }
+            else{
+                writeLine(arg + " doesn't exist");
+            }
+            break;
+        case "wallet":
+            writeLine(`${player.money}`);
+            break;
         default:
             writeLine((arg!=null)?"incorrect command":"incomplete command");
             break;
     }
 }
 function writeLine(text){
-    console.log(text);
+    terminal.text = text;
 }
 function drawTerminal(){
-    let width = 200;
-    draw.fillRect((can.width-width)/2,can.height/2-100,10,width);
+    draw.fillStyle = "white";
+    draw.fillText(terminal.text,(can.width)/2,can.height/2-100+terminal.height*0.3);
+}
+function shorten(name){
+    let parts = name.split("-");
+    let final = parts[0][0];
+    final+=parts[1];
+    final+=parts[2];
+    return final;
 }
 
 document.body.onkeyup = (e) => {
