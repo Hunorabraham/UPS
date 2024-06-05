@@ -66,16 +66,16 @@ function generatePlanet(type){
         newPlanet.x = can.width/2/pixelWidth-20;
         newPlanet.y = can.height/2/pixelWidth-20;
     }
-    else if(planets.length<rings[0]+1){
+    else if(planets.length<=rings[0]+1){
         newPlanet.x = Math.round(avgDist*Math.cos(ang))+can.width/2/pixelWidth-20;
         newPlanet.y = Math.round(avgDist*Math.sin(ang))+can.height/2/pixelWidth-20;
     }
-    else if(planets.length<rings[1]+1){
+    else if(planets.length<=rings[1]+1){
         newPlanet.x = Math.round(avgDist*2*Math.cos(ang))+can.width/2/pixelWidth-20;
         newPlanet.y = Math.round(avgDist*2*Math.sin(ang))+can.height/2/pixelWidth-20;
         
     }
-    else if(planets.length<rings[2]+1){
+    else if(planets.length<=rings[2]+1){
         newPlanet.x = Math.round(avgDist*3*Math.cos(ang))+can.width/2/pixelWidth-20;
         newPlanet.y = Math.round(avgDist*3*Math.sin(ang))+can.height/2/pixelWidth-20;
     }
