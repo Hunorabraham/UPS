@@ -21,7 +21,7 @@ const alphanum = /^[a-zA-Z0-9?]$/;
 let terminal = {};
 terminal.width = 200;
 terminal.height = 20;
-terminal.text = "hihihi";
+terminal.text = "universal terminal v0.0.1";
 //input
 keys = [];
 document.body.onkeydown = (e)=>{
@@ -45,7 +45,8 @@ document.body.onkeydown = (e)=>{
     }
 };
 function execute(){
-    let com = command.split(" ")[0];
+    if(command == "") return;
+    let com = command.split(" ")[0].toLocaleLowerCase();
     let arg = command.split(" ")[1];
     command = "";
     switch(com){
