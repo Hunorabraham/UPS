@@ -11,11 +11,54 @@ const sourceMultiplier = pixelWidth/5;
 const avgDist = 80;
 const maxNeighbours = 6;
 
+//console
+let command = "";
+const alphanum = /^[a-zA-Z1-9]$/;
 
 //input
 keys = [];
-document.body.onkeydown = (e)=>{if(!keys.includes(e.code)) keys.push(e.code);};
-document.body.onkeyup = (e) => {if(keys.includes(e.code)) keys.splice(keys.indexOf(e.code),1);};
+document.body.onkeydown = (e)=>{
+    if(!keys.includes(e.code)) keys.push(e.code);
+    if(e.key.match(alphanum)) {
+        command+=e.key;
+        console.log(command);
+        return;
+    }
+    switch(e.code){
+        case "Space":
+            command += " ";
+            break;
+        case "Enter":
+            execute();
+    }
+};
+function execute(){
+    let com = command.split(" ")[0];
+    let arg = command.split(" ")[1];
+    command = "";
+    switch(com){
+        case "echo":
+            writeLine(arg);
+            break;
+        case "fuck":
+            writeLine("AAAAAA");
+            break;
+        default:
+            writeLine((arg!=null)?"incorrect command":"incomplete command");
+            break;
+    }
+}
+function writeLine(text){
+    console.log(text);
+}
+function drawTerminal(){
+    let width = 200;
+    draw.fillRect((can.width-width)/2,can.height/2-100,10,width);
+}
+
+document.body.onkeyup = (e) => {
+    if(keys.includes(e.code)) keys.splice(keys.indexOf(e.code),1);
+};
 //text settings
 draw.font = "10pt Consolas";
 draw.textBaseline = "top";
@@ -191,5 +234,6 @@ function start(){
         planets.forEach(planet => {
             draw.fillText(planet.name,(planet.x+20)*pixelWidth,(planet.y + 41)*pixelWidth);
         });
+        drawTerminal();
     },100);
 }
