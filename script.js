@@ -5,9 +5,18 @@ const bgColour = "rgb(127,169,143)";
 const bgGradient = draw.createRadialGradient(can.width/2,can.height/2,0,can.width/2,can.height/2,can.height*2);
 bgGradient.addColorStop(0,"rgb(30,30,40)");
 bgGradient.addColorStop(0.9,"rgb(0,0,0)");
-const pixelWidth = 3;
+let pixelWidth = 3;
 const sourceMultiplier = pixelWidth/5;
 
+const avgDist = 80;
+const maxNeighbours = 6;
+
+
+//input
+keys = [];
+document.body.onkeydown = (e)=>{if(!keys.includes(e.code)) keys.push(e.code);};
+document.body.onkeyup = (e) => {if(keys.includes(e.code)) keys.splice(keys.indexOf(e.code),1);};
+//text settings
 draw.font = "10pt Consolas";
 draw.textBaseline = "top";
 draw.textAlign = "center";
@@ -29,6 +38,7 @@ class planet{
         this.y = 0;
         this.name = generateName();
         this.neighbours = [];
+        this.difficulty = 0;
         this.spriteName = "missing";//missing by default
         if(options != null) Object.keys(options).forEach((key)=>this[key]=options[key]);
         planets.push(this);
@@ -42,17 +52,51 @@ function generatePlanet(type){
             newPlanet = new planet(type,{
                 theme : rngTheme,
                 spriteName : themeSprites[rngTheme],
-                x : Math.round(Math.random()*can.width/pixelWidth -40),
-                y : Math.round(Math.random()*can.height/pixelWidth -40),
             });
             break;
         case "merchant":
             newPlanet = new planet(type,{
                 spriteName : "merchant1",
-                x : Math.round(Math.random()*can.width/pixelWidth -40),
-                y : Math.round(Math.random()*can.height/pixelWidth -40),
             });
             break;
+    }
+    //location fuckery
+    if(planets.length==1) {
+        newPlanet.x = can.width/2/pixelWidth-20;
+        newPlanet.y = can.height/2/pixelWidth-20;
+
+    }
+    else if(planets.length < 8){
+        let ang = (Math.PI/3) * (planets.length-1);
+        newPlanet.x = Math.round(avgDist*Math.cos(ang))+can.width/2/pixelWidth-20;
+        newPlanet.y = Math.round(avgDist*Math.sin(ang))+can.height/2/pixelWidth-20;
+
+        console.log(newPlanet);
+        planets[0].neighbours.push(newPlanet);
+        newPlanet.neighbours.push(planets[0]);
+        if(planets.length > 2) {
+            planets[planets.length-2].neighbours.push(newPlanet);
+            newPlanet.neighbours.push(planets[planets.length-2]);
+        }
+        if(planets.length == 7){
+            planets[1].neighbours.push(newPlanet);
+            newPlanet.neighbours.push(planets[1]);
+        }
+    }
+    else{
+        let left, right;
+        for(let i = 0; i < planets.length; i++){
+            if(planets[i].neighbours.length < maxNeighbours){
+                for(let j = 0; j < planets[i].neighbours.length; j++){
+                    if(planets[i].neighbours[j].neighbours.length < maxNeighbours){
+                        left = planets[i];
+                        right = planets[i].neighbours[j];
+                    }
+                }
+            }
+        }
+        newPlanet.x = left.x + right.x;
+        newPlanet.y = left.y + right.y;
     }
     return newPlanet;
 }
@@ -71,7 +115,7 @@ let loadedSprites = 0;
 let running = false;
 function load(){
     loadedSprites++;
-    console.log("thing loaded: ", this);
+    //console.log("thing loaded: ", this);
     if(loadedSprites>=spriteCount && !running){
         running = true;
         start();
@@ -126,13 +170,19 @@ function start(){
     draw.fillStyle = bgGradient;
     draw.strokeStyle = bgGradient;
     planets = [];
-    for(let i = 0; i < 20; i++){
-        planets.push(generatePlanet((Math.random()<0.1)?"merchant":"loot"));
+    for(let i = 0; i < 10; i++){
+        generatePlanet((Math.random()<0.1)?"merchant":"loot");
+    }
+    let stars = [];
+    for(let i = 0; i < 100; i++){
+        stars.push({x: Math.round(Math.random()*can.width/pixelWidth), y: Math.round(Math.random()*can.height/pixelWidth)});
     }
     setInterval(()=>{
         draw.fillStyle = bgGradient;
         draw.fillRect(0,0,can.width,can.height);
         //drawPixelPerfect(spriteDict.planet_1,5,5);
+        draw.fillStyle = "white";
+        stars.forEach(star=>draw.fillRect(star.x*pixelWidth,star.y*pixelWidth,pixelWidth,pixelWidth));
         planets.forEach(planet => {
             drawAligned2(spriteDict[planet.spriteName],planet.x,planet.y)
         });
