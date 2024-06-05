@@ -10,7 +10,7 @@ const sourceMultiplier = pixelWidth/5;
 
 const avgDist = 80;
 const maxNeighbours = 6;
-
+const rings = [Math.round(Math.random()*3)+3,Math.round(Math.random()*6)+6,Math.round(Math.random()*12)+12];
 //console
 let command = "";
 const alphanum = /^[a-zA-Z1-9]$/;
@@ -104,11 +104,29 @@ function generatePlanet(type){
             break;
     }
     //location fuckery
+    let ang = Math.random()*2*Math.PI;
     if(planets.length==1) {
         newPlanet.x = can.width/2/pixelWidth-20;
         newPlanet.y = can.height/2/pixelWidth-20;
-
     }
+    else if(planets.length<rings[0]+1){
+        newPlanet.x = Math.round(avgDist*Math.cos(ang))+can.width/2/pixelWidth-20;
+        newPlanet.y = Math.round(avgDist*Math.sin(ang))+can.height/2/pixelWidth-20;
+    }
+    else if(planets.length<rings[1]+1){
+        newPlanet.x = Math.round(avgDist*2*Math.cos(ang))+can.width/2/pixelWidth-20;
+        newPlanet.y = Math.round(avgDist*2*Math.sin(ang))+can.height/2/pixelWidth-20;
+        
+    }
+    else if(planets.length<rings[2]+1){
+        newPlanet.x = Math.round(avgDist*3*Math.cos(ang))+can.width/2/pixelWidth-20;
+        newPlanet.y = Math.round(avgDist*3*Math.sin(ang))+can.height/2/pixelWidth-20;
+    }
+    console.log(newPlanet);
+    return newPlanet;
+
+    /*
+    
     else if(planets.length < 8){
         let ang = (Math.PI/3) * (planets.length-1);
         newPlanet.x = Math.round(avgDist*Math.cos(ang))+can.width/2/pixelWidth-20;
@@ -142,6 +160,7 @@ function generatePlanet(type){
         newPlanet.y = left.y + right.y;
     }
     return newPlanet;
+    */
 }
 
 
